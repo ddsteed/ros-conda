@@ -1,0 +1,85 @@
+#!/usr/bin/env  bash
+
+#-----------------------------------------------------------------------------------
+# This script is to install ROS from conda
+#
+# Author: Hao Feng (F1)
+# Date:   Apr. 07, 2022
+#
+# Copyright (c) 2022-, FATAVAY CO., LTD.
+#-----------------------------------------------------------------------------------
+
+#- set global varialbles
+
+export ros_src_home=/Users/fengh/Research/ROS
+export ros_dest=/opt/ros
+
+export distribution_default=foxy
+
+export os=`uname`
+export shell_dir=$(cd "$(dirname "$0")";pwd)
+
+#-----------------------------------------------------------------------------------
+function print_welcome {
+    printc_d "-----------------------------------------------------------------------------------"
+    printc_d " This script is to install/remove ROS distribution from conda                      "
+    printc_d "                                                                                   "
+    printc_d " Author: Hao Feng (F1)                                                             "
+    printc_d " Date:   Apr. 07, 2022                                                             "
+    printc_d "                                                                                   "
+    printc_d " Copyright (c) 2022-, FATAVAY CO., LTD.                                            "
+    printc_d "-----------------------------------------------------------------------------------"
+
+    # ---
+    echo
+    echo "* ------- "
+    printc_d "* specify ROS distribution name ... "
+    echo
+    echo  "         ROS1: noetic "
+    echo  "         ROS2: galactic "
+    echo
+    echo -n " * Please input ROS name, [$distribution_default]: "
+    read distribution
+    if [[ $distribution == "" ]]; then export distribution=$distribution_default; fi
+
+    # ---
+    export bipath=${ros_dest}/${distribution}_conda
+    mkdir -p $bipath
+    echo
+    echo "* ------- "
+    echo "* The ROS destination directory is: $bipath"
+
+    # ---
+    echo
+    echo "* ------- "
+    printc_d "* specify run mode ... "
+    echo
+    echo -n "* Please input run mode: install/remove, [$run_default]: "
+    read run
+    if [[ $run == "" ]]; then export run=$run_default; fi
+
+}
+
+#-----------------------------------------------------------------------------------
+# --- show message in color
+
+function printc {
+    declare -a bcolor fcolor
+    
+    fcolor=([black]=30 [red]=31 [green]=32 [yellow]=33 [blue]=34 [purple]=35 [skyblue]=36] [white]=37)
+    bcolor=([black]=40 [red]=41 [green]=42 [yellow]=44 [blue]=44 [purple]=45 [skyblue]=46] [white]=47)
+    txt=$3
+                                                                                                  
+    echo -e "\033[${bcolor[$1]};${fcolor[$2]}m${txt}\033[0m"
+}
+
+function printc_d {
+    bg=44
+    fg=37
+    txt=$1
+    echo -e "\033[${bg};${fg}m${txt}\033[0m"
+}
+
+#-----------------------------------------------------------------------------------
+# main function
+
