@@ -105,10 +105,10 @@ function printc_d {
 function set_ros_env {
 
     echo
-    echo "* ------ "
-    echo "* $run ROS conda environment ..."
+    echo "* -----                           "
+    printc_d "* $run ROS conda environment ..."
     echo
-        
+
     if [[ $run == install ]]; then
         create_conda_vironment
         install_robostack
@@ -130,8 +130,8 @@ function create_conda_vironment {
     source ${conda_base}/etc/profile.d/conda.sh
 
     echo
-    echo "* ----- "
-    echo "* create ros-conda environment ... "
+    echo "* -----                            "
+    printc_d "* create ros-conda environment ... "
     echo
     
     if [[ ! -d $rosenv ]]; then
@@ -166,10 +166,10 @@ function create_conda_vironment {
 #-----------------------------------------------------------------------------------
 function install_robostack {
     init_rosenv
-    
+
     echo
-    echo "* ----- "
-    echo "* install ROS-$distribution ... "
+    echo "* -----                         "
+    printc_d "* install ROS-$distribution ... "
     echo
                 
     mamba install -y ros-$distribution-desktop
@@ -194,11 +194,10 @@ function install_packages {
         packages=(${packages[@]} vs2019_win-64)
     fi
     
+    echo "* -----                             "
+    printc_d "* install ROS-compiler packages ... "
     echo
-    echo "* ----- "
-    echo "* install ROS-compiler packages ... "
-    echo
-    echo "     ... ${packages[@]} ..."
+    echo     "     ... ${packages[@]} ...         "
     echo
     
     mamba install -y ${packages[@]}
