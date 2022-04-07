@@ -11,10 +11,14 @@
 
 #- set global varialbles
 
-export ros_src_home=/Users/fengh/Research/ROS
 export ros_dest=/opt/ros
+export distribution_default=galactic
 
-export distribution_default=foxy
+export run_default=install
+
+export conda_base_default=/opt/miniconda3
+
+export python_version_default=3.8
 
 export os=`uname`
 export shell_dir=$(cd "$(dirname "$0")";pwd)
@@ -43,13 +47,6 @@ function print_welcome {
     if [[ $distribution == "" ]]; then export distribution=$distribution_default; fi
 
     # ---
-    export bipath=${ros_dest}/${distribution}_conda
-    mkdir -p $bipath
-    echo
-    echo "* ------- "
-    echo "* The ROS destination directory is: $bipath"
-
-    # ---
     echo
     echo "* ------- "
     printc_d "* specify run mode ... "
@@ -57,6 +54,30 @@ function print_welcome {
     echo -n "* Please input run mode: install/remove, [$run_default]: "
     read run
     if [[ $run == "" ]]; then export run=$run_default; fi
+
+    # ---
+    export rosenv=${ros_dest}/conda
+    echo
+    echo "* ------- "
+    echo "* The ROS destination directory is: $rosenv"
+
+    # ---
+    echo
+    echo "* ------- "
+    printc_d "* specify python version ... "
+    echo
+    echo -n "* Please input python version: [${python_version_default}]: "
+    read python_version
+    if [[ ${python_version} == "" ]]; then export python_version=${python_version_default}; fi
+
+    # ---
+    echo
+    echo "* ------- "
+    printc_d "* specify conda base ... "
+    echo
+    echo -n "* Please input conda base: [${conda_base_default}]: "
+    read conda_base
+    if [[ ${conda_base} == "" ]]; then export conda_base=${conda_base_default}; fi
 
 }
 
@@ -81,5 +102,120 @@ function printc_d {
 }
 
 #-----------------------------------------------------------------------------------
+function set_ros_env {
+
+    echo
+    echo "* ------ "
+    echo "* $run ROS conda environment ..."
+    echo
+        
+    if [[ $run == install ]]; then
+        create_conda_vironment
+        install_robostack
+        install_packages
+    elif [[ $run == remove ]]; then
+        rm -rf $rosenv
+    fi
+}
+
+#-----------------------------------------------------------------------------------
+function init_rosenv {
+    conda deactivate
+    conda activate $rosenv
+}
+
+
+#-----------------------------------------------------------------------------------
+function create_conda_vironment {
+    source ${conda_base}/etc/profile.d/conda.sh
+
+    echo
+    echo "* ----- "
+    echo "* create ros-conda environment ... "
+    echo
+    
+    if [[ ! -d $rosenv ]]; then
+        conda create -y --prefix $rosenv python=${python_version}
+
+        init_rosenv
+            
+        # add conda source
+        cat <<< '
+                show_channel_urls: true                                          
+                default_channels:                                                  
+                  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main        
+                  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free        
+                  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/r           
+                custom_channels:                                                   
+                  conda-forge: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud 
+                  msys2: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud       
+                  bioconda: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud    
+                  menpo: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud       
+                  pytorch: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud     
+                  simpleitk: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud   
+                channels:                                                          
+                  - conda-forge
+                  - robostack
+                  - robostack-experimental                                             
+                  - defaults       '  > $rosenv/.condarc
+
+        conda install -y mamba
+    fi
+}
+
+#-----------------------------------------------------------------------------------
+function install_robostack {
+    init_rosenv
+    
+    echo
+    echo "* ----- "
+    echo "* install ROS-$distribution ... "
+    echo
+                
+    mamba install -y ros-$distribution-desktop
+
+}
+
+#-----------------------------------------------------------------------------------
+function install_packages {
+    init_rosenv
+    
+    packages=(compilers cmake pkg-config make ninja colcon-common-extensions)
+    
+    # on Linux and osx (but not Windows) for ROS1 you might want to:
+    if [[ $distribution == noetic ]]; then
+        packages=(${packages[@]} catkin_tools)
+    fi
+    
+    # on Windows, install Visual Studio 2017 or 2019 with C++ support 
+    # see https://docs.microsoft.com/en-us/cpp/build/vscpp-step-0-installation?view=msvc-160
+        # on Windows, install the Visual Studio command prompt:
+    if [[ $os == Windows ]]; then
+        packages=(${packages[@]} vs2019_win-64)
+    fi
+    
+    echo
+    echo "* ----- "
+    echo "* install ROS-compiler packages ... "
+    echo
+    echo "     ... ${packages[@]} ..."
+    echo
+    
+    mamba install -y ${packages[@]}
+
+    # reload environment to activate required scripts before running anything
+    # on Windows, please restart the Anaconda Prompt / Command Prompt!
+    init_rosenv
+
+    # install rosdep if you want
+    mamba install -y rosdep
+    rosdep init
+    rosdep update
+}
+
+#-----------------------------------------------------------------------------------
 # main function
+
+print_welcome
+set_ros_env
 
