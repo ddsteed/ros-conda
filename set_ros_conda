@@ -138,6 +138,7 @@ function create_conda_vironment {
         conda create -y --prefix $rosenv python=${python_version}
 
         init_rosenv
+        conda install -y mamba -c conda-forge
             
         # add conda source
         cat <<< '
@@ -159,7 +160,6 @@ function create_conda_vironment {
                   - robostack-experimental                                             
                   - defaults       '  > $rosenv/.condarc
 
-        conda install -y mamba
     fi
 }
 
