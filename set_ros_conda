@@ -18,7 +18,7 @@ export run_default=install
 
 export conda_base_default=/opt/miniconda3
 
-export python_version_default=3.8
+export python_version_default=3.9
 
 export os=`uname`
 export shell_dir=$(cd "$(dirname "$0")";pwd)
@@ -212,9 +212,11 @@ function install_packages {
     init_rosenv
 
     # install rosdep if you want
-    mamba install -y rosdep
-    rosdep init
-    rosdep update
+    if [[ ! -f $rosenv/bin/rosdep ]]; then
+        mamba install -y rosdep
+        rosdep init
+        rosdep update
+    fi
 }
 
 #-----------------------------------------------------------------------------------
