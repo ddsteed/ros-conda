@@ -40,7 +40,7 @@ function print_welcome {
     printc_d "* specify ROS distribution name ... "
     echo
     echo  "         ROS1: noetic "
-    echo  "         ROS2: galactic "
+    echo  "         ROS2: foxy | galactic "
     echo
     echo -n " * Please input ROS name, [$distribution_default]: "
     read distribution
@@ -56,7 +56,7 @@ function print_welcome {
     if [[ $run == "" ]]; then export run=$run_default; fi
 
     # ---
-    export rosenv=${ros_dest}/conda
+    export rosenv=${ros_dest}/${distribution}_conda
     echo
     echo "* ------- "
     echo "* The ROS destination directory is: $rosenv"
