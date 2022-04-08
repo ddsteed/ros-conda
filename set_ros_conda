@@ -141,29 +141,30 @@ function create_conda_vironment {
         conda install -y mamba -c conda-forge
             
         # add conda source
-        # cat <<< '
-        #         show_channel_urls: true                                          
-        #         default_channels:                                                  
-        #           - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main        
-        #           - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free        
-        #           - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/r           
-        #         custom_channels:                                                   
-        #           conda-forge: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud 
-        #           msys2: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud       
-        #           bioconda: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud    
-        #           menpo: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud       
-        #           pytorch: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud     
-        #           simpleitk: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud   
-        #         channels:                                                          
-        #           - conda-forge
-        #           - robostack
-        #           - robostack-experimental                                             
-        #           - defaults       '  > $rosenv/.condarc
+        cat <<< '
+                show_channel_urls: true                                          
+                default_channels:                                                  
+                  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main        
+                  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free        
+                  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/r           
+                custom_channels:                                                   
+                  conda-forge: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud 
+                  msys2: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud       
+                  bioconda: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud    
+                  menpo: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud       
+                  pytorch: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud     
+                  simpleitk: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud   
+                channels:                                                          
+                  - conda-forge
+                  - robostack
+                  - robostack-experimental                                             
+                  - defaults       '  > $rosenv/.condarc
 
         # add channels
-        conda config --env --add channels conda-forge
-        conda config --env --add channels robostack
-        conda config --env --add channels robostack-experimental
+        # conda config --env --add channels conda-forge
+        # conda config --env --add channels robostack
+        # conda config --env --add channels robostack-experimental
+
     fi
 }
 
