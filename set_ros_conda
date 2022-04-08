@@ -18,7 +18,7 @@ export run_default=install
 
 export conda_base_default=/opt/miniconda3
 
-export python_version_default=3.9
+export python_version_default=3.8
 
 export os=`uname`
 export shell_dir=$(cd "$(dirname "$0")";pwd)
@@ -40,7 +40,7 @@ function print_welcome {
     printc_d "* specify ROS distribution name ... "
     echo
     echo  "         ROS1: noetic "
-    echo  "         ROS2: foxy | galactic "
+    echo  "         ROS2: galactic "
     echo
     echo -n " * Please input ROS name, [$distribution_default]: "
     read distribution
